@@ -1,0 +1,65 @@
+---
+title: "Artist Diversity R code"
+author: "Bernhard Klingenberg"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Artist Datafile
+```{r}
+path <- 'https://raw.githubusercontent.com/artofstat/ArtistDiversity/master/artistdata.csv'
+artists <- read.csv(path)
+```
+
+## Overall Statistics
+```{r}
+library(dplyr)
+# Overall number of artists across all museums:
+artists %>%  summarize(size=n()) 
+# Number of artists in each museum: 
+artists %>%  group_by(museum) %>% summarize(size=n()) 
+#Overall unique number of artists, after removing duplicates:
+artists.unique <- artists %>% distinct(artist, .keep_all = TRUE)
+artists.unique %>%  summarize(size=n()) 
+### Overall statistics
+# Gender Distribution:
+table(artists.unique$gender, useNA="always")
+round(prop.table(table(artists.unique$gender)),3)
+#overall gender score confidence interval:
+prop.test(1025, 1025+7086, correct=FALSE)
+
+# Ethnicity Distribution:
+table(artists.unique$ethnicity, useNA="always")
+round(prop.table(table(artists.unique$ethnicity)),3)
+# Simultaneous Score Confidence Intervals:
+nums <- unlist(table(artists.unique$ethnicity))
+sapply(nums, function(x) prop.test(x, sum(nums), correct=FALSE, conf.level = 1-0.05/5)$conf.int)
+
+# Gender & Ethnicity Distribution:
+table(artists.unique$gender, artists.unique$ethnicity, useNA="always")
+round(addmargins(prop.table(table(artists.unique$gender, artists.unique$ethnicity))),3)
+
+# Geographical Region:
+table(artists.unique$GEO3major, useNA="always")
+round(prop.table(table(artists.unique$GEO3major)),3)
+
+# Birth Decade
+mean(artists.unique$year)
+```
+
+## Museum Specific Analysis
+```{r}
+genderdf <- artists %>% select(museum, gender) %>% group_by(museum) %>% 
+summarize(men=sum(gender=="man", na.rm=TRUE), 
+          women=sum(gender=="woman", na.rm=TRUE), 
+          prop.women=women/(men+women), 
+          LB=prop.test(women,men+women, correct=FALSE, conf.level = 1-0.05/18)$conf.int[1], 
+          UB=prop.test(women,men+women, correct=FALSE, conf.level = 1-0.05/18)$conf.int[2]
+          )
+genderdf
+```
+
+
