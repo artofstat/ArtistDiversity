@@ -6,15 +6,16 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(tidy=TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=70))
 ```
-
-## Load Artist Datafile
+## 1. Load Artist Datafile
 ```{r}
 path <- 'https://raw.githubusercontent.com/artofstat/ArtistDiversity/master/artistdata.csv'
 artists <- read.csv(path)
 ```
 
-## Overall Statistics
+## 2. Overall Statistics
 ```{r}
 library(dplyr)
 # Overall number of artists across all museums:
@@ -47,19 +48,134 @@ table(artists.unique$GEO3major, useNA="always")
 round(prop.table(table(artists.unique$GEO3major)),3)
 
 # Birth Decade
-mean(artists.unique$year)
+mean(artists.unique$year, na.rm=TRUE)
 ```
 
-## Museum Specific Analysis
+## 3. Museum Specific Analysis
+## 3.1 Gender:
 ```{r}
 genderdf <- artists %>% select(museum, gender) %>% group_by(museum) %>% 
 summarize(men=sum(gender=="man", na.rm=TRUE), 
-          women=sum(gender=="woman", na.rm=TRUE), 
-          prop.women=women/(men+women), 
-          LB=prop.test(women,men+women, correct=FALSE, conf.level = 1-0.05/18)$conf.int[1], 
-          UB=prop.test(women,men+women, correct=FALSE, conf.level = 1-0.05/18)$conf.int[2]
+          women=sum(gender=="woman", na.rm=TRUE),
+          total=men+women,
+          prop.women=women/total, 
+          LB=prop.test(women,total, correct=FALSE, conf.level = 1-0.05/18)$conf.int[1], 
+          UB=prop.test(women,total, correct=FALSE, conf.level = 1-0.05/18)$conf.int[2]
           )
+genderdf$padj <- NA
+for (i in 1:18) {
+  genderdf$padj[i] <- prop.test(c(genderdf$women[i], sum(genderdf$women[-i])), c(genderdf$total[i], sum(genderdf$total[-i])), correct=FALSE)$p.value
+}
+genderdf$sig <- genderdf$padj<0.05/18
 genderdf
+```
+
+## 3.2 Ethnicity:
+```{r}
+ethndf <- artists %>% select(museum, ethnicity) %>% group_by(museum) %>% 
+  summarize(asian=sum(ethnicity=="asian", na.rm=TRUE), 
+            black=sum(ethnicity=="black", na.rm=TRUE), 
+            hispanic=sum(ethnicity=="hispanic", na.rm=TRUE), 
+            other=sum(ethnicity=="other", na.rm=TRUE), 
+            white=sum(ethnicity=="white", na.rm=TRUE), 
+            total=asian+black+hispanic+other+white
+            )
+ethndf
+```
+
+### 3.2.1 Asian:
+```{r}
+ethndf.asian <- ethndf %>% select(museum, asian, total) %>% group_by(museum) %>%
+  mutate(prop=asian/total, 
+         LB=prop.test(asian, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[1], 
+         UB=prop.test(asian, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[2]
+         )
+ethndf.asian$padj <- NA
+for (i in 1:18) {
+  ethndf.asian$padj[i] <- prop.test(c(ethndf.asian$asian[i], sum(ethndf.asian$asian[-i])), c(ethndf.asian$total[i], sum(ethndf.asian$total[-i])), correct=FALSE)$p.value
+}
+ethndf.asian$sig <- ethndf.asian$padj<0.05/(18*5)
+ethndf.asian
+```
+
+### 3.2.2 Black
+```{r}
+ethndf.black <- ethndf %>% select(museum, black, total) %>% group_by(museum) %>%
+  mutate(prop=black/total, 
+         LB=prop.test(black, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[1], 
+         UB=prop.test(black, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[2]
+         )
+ethndf.black$padj <- NA
+for (i in 1:18) {
+  ethndf.black$padj[i] <- prop.test(c(ethndf.black$black[i], sum(ethndf.black$black[-i])), c(ethndf.black$total[i], sum(ethndf.black$total[-i])), correct=FALSE)$p.value
+}
+ethndf.black$sig <- ethndf.black$padj<0.05/(18*5)
+ethndf.black
+```
+
+### 3.2.3 Hispanic
+```{r}
+ethndf.hispanic <- ethndf %>% select(museum, hispanic, total) %>% group_by(museum) %>%
+  mutate(prop=hispanic/total, 
+         LB=prop.test(hispanic, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[1], 
+         UB=prop.test(hispanic, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[2]
+         )
+ethndf.hispanic$padj <- NA
+for (i in 1:18) {
+  ethndf.hispanic$padj[i] <- prop.test(c(ethndf.hispanic$hispanic[i], sum(ethndf.hispanic$hispanic[-i])), c(ethndf.hispanic$total[i], sum(ethndf.hispanic$total[-i])), correct=FALSE)$p.value
+}
+ethndf.hispanic$sig <- ethndf.hispanic$padj<0.05/(18*5)
+ethndf.hispanic
+```
+
+### 3.2.4 White:
+```{r}
+ethndf.white <- ethndf %>% select(museum, white, total) %>% group_by(museum) %>%
+  mutate(prop=white/total, 
+         LB=prop.test(white, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[1], 
+         UB=prop.test(white, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[2]
+         )
+ethndf.white$padj <- NA
+for (i in 1:18) {
+  ethndf.white$padj[i] <- prop.test(c(ethndf.white$white[i], sum(ethndf.white$white[-i])), c(ethndf.white$total[i], sum(ethndf.white$total[-i])), correct=FALSE)$p.value
+}
+ethndf.white$sig <- ethndf.white$padj<0.05/(18*5)
+ethndf.white
+```
+
+### 3.2.5 Other
+```{r}
+ethndf.other <- ethndf %>% select(museum, other, total) %>% group_by(museum) %>%
+  mutate(prop=other/total, 
+         LB=prop.test(other, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[1], 
+         UB=prop.test(other, total, correct=FALSE, conf.level = 1-0.05/(18*5))$conf.int[2]
+         )
+ethndf.other$padj <- NA
+for (i in 1:18) {
+  ethndf.other$padj[i] <- prop.test(c(ethndf.other$other[i], sum(ethndf.other$other[-i])), c(ethndf.other$total[i], sum(ethndf.other$total[-i])), correct=FALSE)$p.value
+}
+ethndf.other$sig <- ethndf.other$padj<0.05/(18*5)
+ethndf.other
+```
+
+## 3.3 Geographic Origin
+```{r}
+geodf <- artists %>% select(museum, GEO3major) %>% group_by(museum) %>% 
+  summarize(Africa=round(100*prop.table(table(GEO3major))[1],1), 
+            Asia=round(100*prop.table(table(GEO3major))[2],1), 
+            Europe=round(100*prop.table(table(GEO3major))[3],1), 
+            LatAm=round(100*prop.table(table(GEO3major))[4],1), 
+            NorthAm=round(100*prop.table(table(GEO3major))[5],1), 
+            WAsia=round(100*prop.table(table(GEO3major))[6],1)
+  )
+geodf
+```
+
+## 3.4 Birth Year
+```{r}
+yeardf <- artists %>% select(museum, year) %>% group_by(museum) %>% 
+  summarize(Avg.Year=round(mean(year, na.rm=TRUE)))
+yeardf
 ```
 
 

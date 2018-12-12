@@ -5,6 +5,8 @@ library(tidyr)
 library(ggmosaic)
 library(markdown)
 library(viridis)
+library(dendextend)
+library(tools)
 
 df <- read.csv('artistdata.csv')
 

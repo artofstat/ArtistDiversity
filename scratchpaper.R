@@ -48,7 +48,6 @@ byr <- byr %>%
 spread(birthyear,relfreq) %>%
   replace_na(list(`500-1500` = 0,`1500's` = 0,`1600's` = 0,`1700's` = 0,`1800's` = 0,`1900's` = 0))
 
-require(dendextend)
 x <- bind_cols(eth,gen) %>%
   select(-starts_with("museu")) %>%
   ungroup() %>%
