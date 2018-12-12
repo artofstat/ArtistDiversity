@@ -6,8 +6,8 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(tidy=TRUE)
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=70))
+#knitr::opts_chunk$set(tidy=TRUE)
+#knitr::opts_chunk$set(tidy.opts=list(width.cutoff=70))
 ```
 ## 1. Load Artist Datafile
 ```{r}
@@ -52,7 +52,7 @@ mean(artists.unique$year, na.rm=TRUE)
 ```
 
 ## 3. Museum Specific Analysis
-## 3.1 Gender:
+## 3.1 Gender
 ```{r}
 genderdf <- artists %>% select(museum, gender) %>% group_by(museum) %>% 
 summarize(men=sum(gender=="man", na.rm=TRUE), 
@@ -70,7 +70,7 @@ genderdf$sig <- genderdf$padj<0.05/18
 genderdf
 ```
 
-## 3.2 Ethnicity:
+## 3.2 Ethnicity
 ```{r}
 ethndf <- artists %>% select(museum, ethnicity) %>% group_by(museum) %>% 
   summarize(asian=sum(ethnicity=="asian", na.rm=TRUE), 
@@ -83,7 +83,7 @@ ethndf <- artists %>% select(museum, ethnicity) %>% group_by(museum) %>%
 ethndf
 ```
 
-### 3.2.1 Asian:
+### 3.2.1 Asian
 ```{r}
 ethndf.asian <- ethndf %>% select(museum, asian, total) %>% group_by(museum) %>%
   mutate(prop=asian/total, 
@@ -128,7 +128,7 @@ ethndf.hispanic$sig <- ethndf.hispanic$padj<0.05/(18*5)
 ethndf.hispanic
 ```
 
-### 3.2.4 White:
+### 3.2.4 White
 ```{r}
 ethndf.white <- ethndf %>% select(museum, white, total) %>% group_by(museum) %>%
   mutate(prop=white/total, 

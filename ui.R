@@ -53,6 +53,25 @@ shinyUI(
           includeMarkdown("include.md")
         ) #end second main panel
       ) #end sidebarLayout second panel
-    ) #end tabPanel second panel
+    ), #end tabPanel second panel
+     tabPanel(title="Reproducible R code",
+              value="Rcode",      
+              sidebarLayout(
+               sidebarPanel(
+                 tags$b(HTML("The R code that was used to analyze the artist data and to creat Tables 2 and 3 is shown to the right. You can download this Rmarkdown
+                             document and reproduce the analysis from here: <br> <br>
+                             <a href='https://raw.githubusercontent.com/artofstat/ArtistDiversity/master/ArtistDiversity_Rcode.Rmd'>R Markdown file to reproduce analysis</a>
+                             <br> <br>
+                             All files, including the artist data, are in the Github repository:
+                             <br> <br>
+                             <a href='https://github.com/artofstat/ArtistDiversity'>github.com/artofstat/ArtistDiversity</a>")),
+                 br(),br(),
+                 width = 3), #end fourth sidebarpanel
+               mainPanel(
+                 includeMarkdown("ArtistDiversity_Rcode.Rmd") #interestingly, includeHTML clashed with DT, so that the data table would not display :(
+               ) #end second main panel
+             ) #end sidebarLayout fourth panel
+    ) #end tabPanel fourth panel
+    
   ) #end navBar
 ) #end ui

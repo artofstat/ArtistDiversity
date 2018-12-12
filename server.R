@@ -9,7 +9,7 @@ library(dendextend)
 library(tools)
 
 df <- read.csv('artistdata.csv')
-
+print(df)
 levels(df$gender) = c('Man','Woman')
 df$gender = as.character(df$gender)
 df$gender[is.na(df$gender)] = 'Not Inferred'
