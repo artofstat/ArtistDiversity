@@ -1,7 +1,9 @@
 ---
 title: "Artist Diversity R code"
 author: "Bernhard Klingenberg"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -64,9 +66,8 @@ summarize(men=sum(gender=="man", na.rm=TRUE),
           )
 genderdf$padj <- NA
 for (i in 1:18) {
-  genderdf$padj[i] <- prop.test(c(genderdf$women[i], sum(genderdf$women[-i])), c(genderdf$total[i], sum(genderdf$total[-i])), correct=FALSE)$p.value
+  genderdf$padj[i] <- prop.test(c(genderdf$women[i], sum(genderdf$women[-i])), c(genderdf$total[i], sum(genderdf$total[-i])), correct=FALSE)$p.value * 18
 }
-genderdf$sig <- genderdf$padj<0.05/18
 genderdf
 ```
 
@@ -92,9 +93,8 @@ ethndf.asian <- ethndf %>% select(museum, asian, total) %>% group_by(museum) %>%
          )
 ethndf.asian$padj <- NA
 for (i in 1:18) {
-  ethndf.asian$padj[i] <- prop.test(c(ethndf.asian$asian[i], sum(ethndf.asian$asian[-i])), c(ethndf.asian$total[i], sum(ethndf.asian$total[-i])), correct=FALSE)$p.value
+  ethndf.asian$padj[i] <- prop.test(c(ethndf.asian$asian[i], sum(ethndf.asian$asian[-i])), c(ethndf.asian$total[i], sum(ethndf.asian$total[-i])), correct=FALSE)$p.value * (18*5)
 }
-ethndf.asian$sig <- ethndf.asian$padj<0.05/(18*5)
 ethndf.asian
 ```
 
@@ -107,9 +107,8 @@ ethndf.black <- ethndf %>% select(museum, black, total) %>% group_by(museum) %>%
          )
 ethndf.black$padj <- NA
 for (i in 1:18) {
-  ethndf.black$padj[i] <- prop.test(c(ethndf.black$black[i], sum(ethndf.black$black[-i])), c(ethndf.black$total[i], sum(ethndf.black$total[-i])), correct=FALSE)$p.value
+  ethndf.black$padj[i] <- prop.test(c(ethndf.black$black[i], sum(ethndf.black$black[-i])), c(ethndf.black$total[i], sum(ethndf.black$total[-i])), correct=FALSE)$p.value * (18*5)
 }
-ethndf.black$sig <- ethndf.black$padj<0.05/(18*5)
 ethndf.black
 ```
 
@@ -122,9 +121,8 @@ ethndf.hispanic <- ethndf %>% select(museum, hispanic, total) %>% group_by(museu
          )
 ethndf.hispanic$padj <- NA
 for (i in 1:18) {
-  ethndf.hispanic$padj[i] <- prop.test(c(ethndf.hispanic$hispanic[i], sum(ethndf.hispanic$hispanic[-i])), c(ethndf.hispanic$total[i], sum(ethndf.hispanic$total[-i])), correct=FALSE)$p.value
+  ethndf.hispanic$padj[i] <- prop.test(c(ethndf.hispanic$hispanic[i], sum(ethndf.hispanic$hispanic[-i])), c(ethndf.hispanic$total[i], sum(ethndf.hispanic$total[-i])), correct=FALSE)$p.value * (18*5)
 }
-ethndf.hispanic$sig <- ethndf.hispanic$padj<0.05/(18*5)
 ethndf.hispanic
 ```
 
@@ -137,9 +135,8 @@ ethndf.white <- ethndf %>% select(museum, white, total) %>% group_by(museum) %>%
          )
 ethndf.white$padj <- NA
 for (i in 1:18) {
-  ethndf.white$padj[i] <- prop.test(c(ethndf.white$white[i], sum(ethndf.white$white[-i])), c(ethndf.white$total[i], sum(ethndf.white$total[-i])), correct=FALSE)$p.value
+  ethndf.white$padj[i] <- prop.test(c(ethndf.white$white[i], sum(ethndf.white$white[-i])), c(ethndf.white$total[i], sum(ethndf.white$total[-i])), correct=FALSE)$p.value * (18*5)
 }
-ethndf.white$sig <- ethndf.white$padj<0.05/(18*5)
 ethndf.white
 ```
 
@@ -152,9 +149,8 @@ ethndf.other <- ethndf %>% select(museum, other, total) %>% group_by(museum) %>%
          )
 ethndf.other$padj <- NA
 for (i in 1:18) {
-  ethndf.other$padj[i] <- prop.test(c(ethndf.other$other[i], sum(ethndf.other$other[-i])), c(ethndf.other$total[i], sum(ethndf.other$total[-i])), correct=FALSE)$p.value
+  ethndf.other$padj[i] <- prop.test(c(ethndf.other$other[i], sum(ethndf.other$other[-i])), c(ethndf.other$total[i], sum(ethndf.other$total[-i])), correct=FALSE)$p.value * (18*5)
 }
-ethndf.other$sig <- ethndf.other$padj<0.05/(18*5)
 ethndf.other
 ```
 

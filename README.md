@@ -1,11 +1,21 @@
-# ArtistDiversity
+# Artist Diversity
 
-Suggestions:
+This repository holds the data file and reproducable Rcode for the paper "Diversity of Artists in Major U.S. Museums" by Topaz, Klingenberg, Turek, Heggeseth, Harris, Blackwood, Chavoya, Nelson and Murphy.
+The files included are:
 
-[ ] Survey Instrument Rmarkdown document needs to be cleaned so it displays more nicely on the web. Currently, bullet points display as numbers.
+  - the artist datafile (artistdata.csv)
+  
+  - the R code to reproduce the analysis shown in Table 2 and 3 of the manuscript:
+  
+     - R Markdown file: ArtistDiversity_Rcode.Rmd
+     
+     - Compiled (to pdf) Rmarkdown code: ArtistDiversity_Rcode.pdf
+     
+     - Compiled (to HTML) Rmarkdown code: ArtistDiversity_Rcode.html
+     
+  
+Other files include
+  
+  - various files underlying the R Shiny web app accessible at https://artofstat.shinyapps.io/ArtistDiversity/
 
-[ ] Maybe have the Survey Instrument as the third tab instead of second
 
-[ ] I really like the graph about gender distribution, but can we clean it up a little (x-axis label seems weird, maybe better to have proportions there going from 0% to 100%. Order of listing museums
-
-[x] Make the sidebar less wide so there is more room for displaying the data table.
