@@ -74,7 +74,7 @@ shinyServer(function(input, output) {
       theme(legend.position="top")
     
     mosaicplot <- ggplot(data=dftmp) + 
-      geom_mosaic(aes_string(weight = "1", x = paste0('product(', input$demovar,', museum)'), fill = input$demovar)) +
+      geom_bar(aes_string(weight = "1", fill =  input$demovar, x = 'museum'), position='fill') +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar)) +
       xlab('') +
       ylab('Proportion') +
