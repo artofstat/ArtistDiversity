@@ -62,12 +62,12 @@ shinyServer(function(input, output) {
     }
     Levels = levels(eval(parse(text=paste0('dftmp$',input$demovar))))
     barplot <- ggplot(data=dftmp, aes_string(x = input$demovar)) + 
-      geom_bar(aes(y = ..prop.., fill = factor(..x..), group = 1)) + facet_wrap(~museum, ncol=3) +
+      geom_bar(aes(y = 100*(..count../sum(..count..)), fill = factor(..x..)))  + #+ facet_wrap(~museum, ncol=3) +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
         breaks=1:length(Levels),
         labels=Levels) +
       xlab(tools::toTitleCase(input$demovar)) +
-      ylab('Proportion') +
+      ylab('Percent') +
       coord_flip() +
       theme_classic(base_size = 18) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1),axis.text.y = element_text(angle = 0, hjust = 1)) + 
@@ -76,7 +76,7 @@ shinyServer(function(input, output) {
     mosaicplot <- ggplot(data=dftmp) + 
       geom_mosaic(aes_string(weight = "1", x = paste0('product(', input$demovar,', museum)'), fill = input$demovar)) +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar)) +
-      xlab('Museum') +
+      xlab('') +
       ylab('Proportion') +
       coord_flip() +
       theme_classic(base_size = 18) +
