@@ -19,14 +19,15 @@ levels(df$ethnicity) = c('Asian','Black','Hispanic or Latino/a','Other','White')
 df$ethnicity = as.character(df$ethnicity)
 df$ethnicity[is.na(df$ethnicity)] = 'Not Inferred'
 df$ethnicity = as.factor(df$ethnicity)
-df$ethnicity = factor(df$ethnicity, levels = c('Asian','Black','Hispanic or Latino/a','Other','White','Not Inferred'))
+df$ethnicity = factor(df$ethnicity, levels = rev(c('Asian','Black','Hispanic or Latino/a','Other','White','Not Inferred')))
+
 
 df$birthyear = cut(df$year,c(-400,499, 1499,1599, 1699, 1799,1899,2000) )
 df$birthyear= as.character(df$birthyear)
 df$birthyear[is.na(df$birthyear)] = 'Not Inferred'
 df$birthyear = as.factor(df$birthyear)
 levels(df$birthyear) = c('Before 500',"1500's","1600's","1700's","1800's","1900's",'500-1500','Not Inferred')
-df$birthyear = factor(df$birthyear, levels = c('Before 500','500-1500',"1500's","1600's","1700's","1800's","1900's",'Not Inferred'))
+df$birthyear = factor(df$birthyear, levels = rev(c('Before 500','500-1500',"1500's","1600's","1700's","1800's","1900's",'Not Inferred')))
 
 
 df$nationality = df$GEO3major
@@ -34,7 +35,7 @@ df$nationality = as.character(df$nationality )
 df$nationality [is.na(df$nationality )] = 'Not Inferred'
 df$nationality  = as.factor(df$nationality)
 levels(df$nationality) = c("Africa", "Asia/Pacific", "Europe", "Latin America/Caribbean","North America","Not Inferred","West Asia"  )
-df$nationality = factor(df$nationality, levels = c("Africa", "Asia/Pacific","West Asia", "Latin America/Caribbean","Europe","North America","Not Inferred"))
+df$nationality = factor(df$nationality, levels = rev(c("Africa", "Asia/Pacific","West Asia", "Latin America/Caribbean","Europe","North America","Not Inferred")))
 
 MLevels = levels(df$museum)
 df$museum = factor(df$museum,levels = MLevels[c(4,7,9,12,14,1,5,13,15,18,2,3,6,10,8,11,16,17)])
@@ -61,11 +62,12 @@ shinyServer(function(input, output) {
       dftmp = dftmp %>% filter_(paste0(input$demovar,"!= 'Not Inferred'")) %>% droplevels()
     }
     Levels = levels(eval(parse(text=paste0('dftmp$',input$demovar))))
+    
     barplot <- ggplot(data=dftmp, aes_string(x = input$demovar)) + 
       geom_bar(aes(y = ..prop.., fill = factor(..x..), group = 1)) + facet_wrap(~museum, ncol=3) +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
-        breaks=1:length(Levels),
-        labels=Levels) +
+        breaks=length(Levels):1,
+        labels=rev(Levels)) +
       xlab(tools::toTitleCase(input$demovar)) +
       ylab('Proportion') +
       coord_flip() +
@@ -74,8 +76,9 @@ shinyServer(function(input, output) {
       theme(legend.position="top")
     
     mosaicplot <- ggplot(data=dftmp) + 
-      geom_bar(aes_string(weight = "1", fill =  input$demovar, x = 'museum'), position='fill') +
-      scale_fill_viridis_d(name=tools::toTitleCase(input$demovar)) +
+      geom_bar(aes_string( fill =  input$demovar, x = 'museum'), position='fill') +
+      scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
+        breaks=rev(Levels))+
       xlab('Museum') +
       ylab('Proportion') +
       coord_flip() +
