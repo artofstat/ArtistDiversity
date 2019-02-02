@@ -7,6 +7,7 @@ library(markdown)
 library(viridis)
 library(dendextend)
 library(tools)
+library(scales)
 
 df <- read.csv('artistdata.csv')
 levels(df$gender) = c('Man','Woman')
@@ -63,8 +64,13 @@ shinyServer(function(input, output) {
     }
     Levels = levels(eval(parse(text=paste0('dftmp$',input$demovar))))
     
-    barplot <- ggplot(data=dftmp, aes_string(x = input$demovar)) + 
-      geom_bar(aes(y = 100*(..count../sum(..count..)), fill = factor(..x..)))  + facet_wrap(~museum, ncol=3) +
+    barplot <-  dftmp %>%
+      count(get(input$demovar),museum) %>%
+      group_by(museum)%>%
+      mutate(percent = n/sum(n)*100) %>%
+      rename(demo = `get(input$demovar)` ) %>%
+      ggplot( aes(x = demo)) + 
+      geom_bar(aes(y = percent, fill = factor(..x..)),stat='identity')  + facet_wrap(~museum, ncol=3) +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
         breaks=length(Levels):1,
         labels=rev(Levels)) +
@@ -75,12 +81,17 @@ shinyServer(function(input, output) {
       theme(axis.text.x = element_text(angle = 0, hjust = 1),axis.text.y = element_text(angle = 0, hjust = 1)) + 
       theme(legend.position="top")
     
-    mosaicplot <- ggplot(data=dftmp) + 
-      geom_bar(aes_string( fill =  input$demovar, x = 'museum'), position='fill') +
+    mosaicplot <- dftmp %>%
+      count(get(input$demovar),museum) %>%
+      group_by(museum)%>%
+      mutate(percent = n/sum(n)*100) %>%
+      rename(demo = `get(input$demovar)` ) %>%
+      ggplot() + 
+      geom_bar(aes( y = percent,fill =  demo, x = museum), stat='identity') +
       scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
         breaks=rev(Levels))+
       xlab('Museum') +
-      ylab('Proportion') +
+      ylab('Percent') +
       coord_flip() +
       theme_classic(base_size = 18) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1),axis.text.y = element_text(angle = 0, hjust = 1)) +
