@@ -5,8 +5,8 @@ account: artofstat
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 596664
-bundleId: 1761654
+bundleId: 1854147
 url: https://artofstat.shinyapps.io/ArtistDiversity/
-when: 1544730710.00825
+when: 1549250043.34518
 asMultiple: FALSE
 asStatic: FALSE

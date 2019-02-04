@@ -71,13 +71,13 @@ shinyServer(function(input, output) {
       rename(demo = `get(input$demovar)` ) %>%
       ggplot( aes(x = demo)) + 
       geom_bar(aes(y = percent, fill = factor(..x..)),stat='identity')  + facet_wrap(~museum, ncol=3) +
-      scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
+      scale_fill_viridis_d(name=paste0(tools::toTitleCase(input$demovar),":"),
         breaks=length(Levels):1,
         labels=rev(Levels)) +
-      xlab(tools::toTitleCase(input$demovar)) +
+      xlab('') + #tools::toTitleCase(input$demovar)
       ylab('Percent') +
       coord_flip() +
-      theme_classic(base_size = 18) +
+      theme_classic(base_size = 14) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1),axis.text.y = element_text(angle = 0, hjust = 1)) + 
       theme(legend.position="top")
     
@@ -88,9 +88,9 @@ shinyServer(function(input, output) {
       rename(demo = `get(input$demovar)` ) %>%
       ggplot() + 
       geom_bar(aes( y = percent,fill =  demo, x = museum), stat='identity') +
-      scale_fill_viridis_d(name=tools::toTitleCase(input$demovar),
+      scale_fill_viridis_d(name=paste0(tools::toTitleCase(input$demovar),":"),
         breaks=rev(Levels))+
-      xlab('Museum') +
+      xlab('') +
       ylab('Percent') +
       coord_flip() +
       theme_classic(base_size = 18) +
