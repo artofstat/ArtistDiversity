@@ -35,7 +35,7 @@ shinyUI(
             "Birth Year"="birthyear", "Nationality"="nationality"),selected='Gender'),
           awesomeCheckbox("unknownfilter", "Exclude artists with not inferred values", value=TRUE),
           #awesomeCheckboxGroup("order", "Prefer bar plots", value=FALSE)
-          awesomeCheckbox("barplot", "Prefer bar plots", value=FALSE),
+          awesomeCheckbox("barplot", "Plot separate graphs for each museum", value=FALSE),
           width = 3), #end third sidebarPanel
         mainPanel(
           plotOutput("demoplot", height = 700)
