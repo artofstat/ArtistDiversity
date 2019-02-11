@@ -4,6 +4,7 @@ author: "Bernhard Klingenberg"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
