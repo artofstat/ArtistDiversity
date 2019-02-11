@@ -34,12 +34,23 @@ round(prop.table(table(artists.unique$gender)),3)
 #overall gender score confidence interval:
 prop.test(1025, 1025+7086, correct=FALSE)
 
+# Gender Distribution when only including artists born after 1945 and of North American origin:
+gender.NorthAmerica.1945 <- artists.unique %>% filter(year>=1945, GEO3major=="North America") %>% select(gender)
+table(gender.NorthAmerica.1945,useNA="always")
+round(prop.table(table(gender.NorthAmerica.1945)),3)
+
 # Ethnicity Distribution:
 table(artists.unique$ethnicity, useNA="always")
 round(prop.table(table(artists.unique$ethnicity)),3)
 # Simultaneous Score Confidence Intervals:
 nums <- unlist(table(artists.unique$ethnicity))
 sapply(nums, function(x) prop.test(x, sum(nums), correct=FALSE, conf.level = 1-0.05/5)$conf.int)
+
+# Ethnicity Distribution when only including artists born after 1945 and of North American origin:
+ethnicity.NorthAmerica.1945 <- artists.unique %>% filter(year>=1945, GEO3major=="North America") %>% select(ethnicity)
+table(ethnicity.NorthAmerica.1945,useNA="always")
+round(prop.table(table(ethnicity.NorthAmerica.1945)),3)
+
 
 # Gender & Ethnicity Distribution:
 table(artists.unique$gender, artists.unique$ethnicity, useNA="always")
