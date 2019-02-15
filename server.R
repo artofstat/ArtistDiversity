@@ -56,6 +56,7 @@ shinyServer(function(input, output) {
     )
   })
   
+  tables <- reactiveValues(museums = NULL, overall = NULL)
   
   output$demoplot <- renderPlot({
     dftmp = df
@@ -64,11 +65,20 @@ shinyServer(function(input, output) {
     }
     Levels = levels(eval(parse(text=paste0('dftmp$',input$demovar))))
     
-    barplot <-  dftmp %>%
+    sum.df <- dftmp %>%
       count(get(input$demovar),museum) %>%
       group_by(museum)%>%
       mutate(percent = n/sum(n)*100) %>%
-      rename(demo = `get(input$demovar)` ) %>%
+      rename(demo = `get(input$demovar)` )
+    
+    
+    tables$museum <- sum.df %>% select(-n) %>% 
+      mutate(percent=paste0(round(percent,1),"%")) %>% 
+      spread(key=demo, value=percent) %>%      
+      rename(Museum=museum)
+
+    
+    barplot <- sum.df  %>%
       ggplot( aes(x = demo, fill = demo)) + 
       geom_bar(aes(y = percent),stat='identity')  + facet_wrap(~museum, ncol=3) +
       scale_fill_brewer(name=paste0(tools::toTitleCase(input$demovar),":"), breaks=rev(Levels), labels=rev(Levels), palette = "Accent") + 
@@ -81,11 +91,7 @@ shinyServer(function(input, output) {
       scale_y_continuous(limit=c(0,100), expand=c(0,0))
     
     
-    mosaicplot <- dftmp %>%
-      count(get(input$demovar),museum) %>%
-      group_by(museum)%>%
-      mutate(percent = n/sum(n)*100) %>%
-      rename(demo = `get(input$demovar)` ) %>%
+    mosaicplot <-sum.df %>%
       ggplot() + 
       geom_bar(aes(y = percent, fill =  demo, x = museum), stat='identity') +
       scale_fill_brewer(name=paste0(tools::toTitleCase(input$demovar),":"), breaks=rev(Levels), labels=rev(Levels), palette = "Accent") + 
@@ -100,7 +106,51 @@ shinyServer(function(input, output) {
     
     ifelse(input$barplot,return(barplot),return(mosaicplot))
   })
+ 
+  output$overallplot <- renderPlot({
+    dftmp = df %>% distinct(artist, .keep_all = TRUE) #only keep each artist once, even if they appear in multiple museums, such as Ansel Adams
+    if(input$unknownfilter){
+      dftmp = dftmp %>% filter_(paste0(input$demovar,"!= 'Not Inferred'")) %>% droplevels()
+    }
+    Levels = levels(eval(parse(text=paste0('dftmp$',input$demovar))))
+    
+    sum.df <- dftmp %>%
+      count(get(input$demovar)) %>%
+      mutate(Museum="Overall", percent = n/sum(n)*100) %>%
+      rename(demo = `get(input$demovar)` )
+    
+    tables$overall <- sum.df %>% select(-n) %>% 
+      mutate(percent=paste0(round(percent,1),"%")) %>%  
+      spread(key=demo, value=percent)
+
+    barplot <-  sum.df %>%
+      ggplot() +
+      geom_bar(aes(x="Overall", y = percent, fill =  demo), stat='identity') +
+      guides(fill=NULL) + 
+      scale_fill_brewer(name="", breaks=NULL, labels=NULL, palette = "Accent") +
+      xlab('') +
+      ylab('Percent (%)') +
+      coord_flip() +
+      theme_classic(base_size = 18) +
+      theme(axis.text.y = element_text(angle = 0, hjust = 1, face="bold"),
+            legend.position="top",
+            plot.margin = margin(l=238)) +
+      scale_y_continuous(limit=c(0,105), expand=c(0,0))
+
+    return(barplot)
+  })
   
+  output$museumresults <- renderDT(
+    tables$museum, 
+    rownames = FALSE,
+    options = list(pageLength = 18, dom = 't')
+  )
+  
+  output$overallresults <- renderDT(
+    tables$overall, 
+    rownames = FALSE,
+    options = list(dom = 't')
+  )
   
   #output$demoplot <- renderPlot({
   #  museumdata <- df %>% group_by(museum) %>% summarize(

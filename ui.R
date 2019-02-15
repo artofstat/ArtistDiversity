@@ -15,7 +15,7 @@ shinyUI(
         sidebarPanel(
           tags$b("The dataset to the right contains crowdsourced information on a random sample of thousands of individual, identifiable artists in various U.S. museums."),
           br(),br(),
-          tags$em("Not Inferred values indicate that we were not able to confidently determine the value based on crowdsourcing approach."),
+          tags$em("Not Inferred values indicate that we were not able to confidently determine the value based on our crowdsourcing approach."),
           awesomeCheckbox("filter", "Allow subsetting?", value=TRUE),
           width = 3), #end first sidebarpanel
         mainPanel(
@@ -23,7 +23,7 @@ shinyUI(
         ) #end first main panel
       ) #end sidebarLayout first panel
     ), #end tabPanel first panel
-    tabPanel(title="Graphs",
+    tabPanel(title="Graphs & Statistics",
       value="Graphs",       
       sidebarLayout(
         sidebarPanel(
@@ -38,7 +38,19 @@ shinyUI(
           awesomeCheckbox("barplot", "Plot separate graphs for each museum", value=FALSE),
           width = 3), #end third sidebarPanel
         mainPanel(
-          plotOutput("demoplot", height = 700)
+          plotOutput("demoplot", height = 750),
+          br(),
+          plotOutput("overallplot", height = 100),
+          br(),
+          br(),
+          DTOutput('museumresults'),
+          br(),
+          br(),
+          DTOutput('overallresults'),
+          br(),
+          br(),
+          br(),
+          br()
         ) #end third mainPanel
       ) #end sidebarLayout third panel
     ), #end tabPanel third panel
